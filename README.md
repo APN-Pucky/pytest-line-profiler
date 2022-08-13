@@ -1,4 +1,4 @@
-# pytest-line-profiler
+# pytest-line-profiler-apn
 
 [![PyPI version][]][1] [![Python versions][]][1] [![See Build Status on Travis CI][]][2]
 
@@ -101,13 +101,11 @@ Distributed under the terms of the [MIT][] license,
 If you encounter any problems, please [file an issue][] along with a
 detailed description.
 
-  [PyPI version]: https://img.shields.io/pypi/v/pytest-line-profiler.svg
-  [1]: https://pypi.org/project/pytest-line-profiler
-  [Python versions]: https://img.shields.io/pypi/pyversions/pytest-line-profiler.svg
-  [See Build Status on Travis CI]: https://travis-ci.com/mgaitan/pytest-line-profiler.svg?branch=main
-  [2]: https://travis-ci.org/mgaitan/pytest-line-profiler
+  [PyPI version]: https://img.shields.io/pypi/v/pytest-line-profiler-apn.svg
+  [1]: https://pypi.org/project/pytest-line-profiler-apn
+  [Python versions]: https://img.shields.io/pypi/pyversions/pytest-line-profiler-apn.svg
   [pip]: https://pypi.org/project/pip/
   [PyPI]: https://pypi.org/project
   [pytest]: https://github.com/pytest-dev/pytest
   [MIT]: http://opensource.org/licenses/MIT
-  [file an issue]: https://github.com/mgaitan/pytest-line-profiler/issues
+  [file an issue]: https://github.com/APN-Pucky/pytest-line-profiler-apn/issues
