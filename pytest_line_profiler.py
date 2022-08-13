@@ -41,6 +41,8 @@ def pytest_addoption(parser):
                      help="Save to line profiles to directory")
     group._addoption('--line-profile-no-print', dest='line_profile_print',action='store_false', default=True,
                      help="Print line profiles to terminal")
+    group._addoption('--line-profile-no-rst', dest='line_profile_rst',action='store_false', default=True,
+                     help="Also save an index.rst file in the line profile directory")
 
     
 def pytest_load_initial_conftests(early_config, parser, args):
@@ -78,10 +80,20 @@ def pytest_terminal_summary(
         if config.option.line_profile_print:
             terminalreporter.write_sep("=", f"Line Profile result for {k}")
             terminalreporter.write(v)
-        if config.option.line_profile_to_dir:
-            os.makedirs(os.path.dirname(config.option.line_profile_to_dir + k + ".txt"), exist_ok=True)
-            with open(config.option.line_profile_to_dir + k + ".txt", "w") as f:
-                f.write(v)
+            if config.option.line_profile_to_dir:
+                os.makedirs(os.path.dirname(config.option.line_profile_to_dir + k + ".txt"), exist_ok=True)
+                with open(config.option.line_profile_to_dir + k + ".txt", "w") as f:
+                    f.write(v)
+                if config.option.line_profile_rst:
+                    with open(config.option.line_profile_to_dir + "index.rst", "a") as f:
+                        f.write(k.split('::')[0] + "\n")
+                        f.write("--------------------\n")
+                        f.write(k.split('::')[-1] + "\n")
+                        f.write("^^^^^^^^^^^^^^^^^^^^\n")
+                        f.write(":: \n\n")
+                        f.write('\t' + '\n\t'.join(v.split('\n'))+ "\n\n")
+
+
 
 
 @pytest.fixture
