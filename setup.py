@@ -11,8 +11,8 @@ def read(fname):
     
 
 setup(
-    name='pytest-line-profiler',
-    version='0.1.0',
+    name='pytest-line-profiler-apn',
+    version='0.1.2',
     author='Martín Gaitán',
     author_email='gaitan@gmail.com',
     maintainer='APN-Pucky',

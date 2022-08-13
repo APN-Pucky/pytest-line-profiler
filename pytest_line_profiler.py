@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import io
+import os
 import pytest
 from importlib import import_module
 from line_profiler import LineProfiler
@@ -36,6 +37,10 @@ def pytest_addoption(parser):
         nargs="*",
         help='Register a function to profile while executed tests.'
     )
+    group._addoption('--line-profile-to-dir', action='store', metavar='path', default='prof/',
+                     help="Save to line profiles to directory")
+    group._addoption('--line-profile-no-print', dest='line_profile_print',action='store_false', default=True,
+                     help="Print line profiles to terminal")
 
     
 def pytest_load_initial_conftests(early_config, parser, args):
@@ -70,8 +75,13 @@ def pytest_terminal_summary(
 ) -> None:
     reports = getattr(config, "_line_profile", {})
     for k, v in reports.items():
-        terminalreporter.write_sep("=", f"Line Profile result for {k}")
-        terminalreporter.write(v)
+        if config.option.line_profile_print:
+            terminalreporter.write_sep("=", f"Line Profile result for {k}")
+            terminalreporter.write(v)
+        if config.option.line_profile_to_dir:
+            os.makedirs(os.path.dirname(config.option.line_profile_to_dir + k + ".txt"), exist_ok=True)
+            with open(config.option.line_profile_to_dir + k + ".txt", "w") as f:
+                f.write(v)
 
 
 @pytest.fixture
