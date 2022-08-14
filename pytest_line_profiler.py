@@ -76,22 +76,29 @@ def pytest_terminal_summary(
     config: "Config",
 ) -> None:
     reports = getattr(config, "_line_profile", {})
+    cur_file = ""
     for k, v in reports.items():
         if config.option.line_profile_print:
             terminalreporter.write_sep("=", f"Line Profile result for {k}")
             terminalreporter.write(v)
-            if config.option.line_profile_to_dir:
-                os.makedirs(os.path.dirname(config.option.line_profile_to_dir + k + ".txt"), exist_ok=True)
-                with open(config.option.line_profile_to_dir + k + ".txt", "w") as f:
-                    f.write(v)
-                if config.option.line_profile_rst:
-                    with open(config.option.line_profile_to_dir + "index.rst", "a") as f:
-                        f.write(k.split('::')[0] + "\n")
+        if config.option.line_profile_to_dir:
+            os.makedirs(os.path.dirname(config.option.line_profile_to_dir + k + ".txt"), exist_ok=True)
+            with open(config.option.line_profile_to_dir + k + ".txt", "w") as f:
+                f.write(v)
+        if config.option.line_profile_rst:
+                os.makedirs(os.path.dirname(config.option.line_profile_to_dir + "index.txt"), exist_ok=True)
+                if cur_file == "":
+                    open(config.option.line_profile_to_dir + "index.rst", 'w').close()
+                with open(config.option.line_profile_to_dir + "index.rst", 'a') as f:
+                    file,meth = k.split('::')
+                    if cur_file != file:
+                        f.write(file + "\n")
                         f.write("--------------------\n")
-                        f.write(k.split('::')[-1] + "\n")
-                        f.write("^^^^^^^^^^^^^^^^^^^^\n")
-                        f.write(":: \n\n")
-                        f.write('\t' + '\n\t'.join(v.split('\n'))+ "\n\n")
+                        cur_file = file
+                    f.write(meth + "\n")
+                    f.write("^^^^^^^^^^^^^^^^^^^^\n")
+                    f.write(":: \n\n")
+                    f.write('\t' + '\n\t'.join(v.split('\n'))+ "\n\n")
 
 
 
