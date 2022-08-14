@@ -5,6 +5,7 @@ import os
 import pytest
 from importlib import import_module
 from line_profiler import LineProfiler
+import collections
 
 
 def get_stats(lp: LineProfiler) -> str:
@@ -77,7 +78,7 @@ def pytest_terminal_summary(
 ) -> None:
     reports = getattr(config, "_line_profile", {})
     cur_file = ""
-    for k, v in reports.items():
+    for k, v in sorted(reports.items()):
         if config.option.line_profile_print:
             terminalreporter.write_sep("=", f"Line Profile result for {k}")
             terminalreporter.write(v)
