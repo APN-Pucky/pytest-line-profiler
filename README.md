@@ -15,7 +15,7 @@ Altought it does its job, is a bit invasive: you need to have an special "instru
 and execute it in a way that potentially clashes with the way you do normally (for instance, through a shortcut command from your editor, a test runner, another script, etc.)   
 
 Moreover, frequently in real case scenarios, "a trigger script" isn't just a simple function call. 
-You need to prepare input data, connect to external resources, etc.  And that's exactly what a test can do, right?    
+You need to prepare input data, connect to external resources, etc. And that's exactly what a test can do, right?    
 
 ## Installation 
 

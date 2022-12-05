@@ -83,11 +83,14 @@ def pytest_runtest_call(item):
         item_runtest = item.runtest
 
         def runtest():
+            # we must call run_test twice here because the second call with the line profiler does not track coverage
+            item_runtest()
             lp.runcall(item_runtest)
             item.config._line_profile = getattr(item.config, "_line_profile", {})
             item.config._line_profile[item.nodeid] = get_stats(lp)
 
         item.runtest = runtest
+    pass
 
 
 def pytest_terminal_summary(
