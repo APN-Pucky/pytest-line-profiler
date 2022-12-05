@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 
+import collections
 import io
 import os
-import pytest
 from importlib import import_module
+
+import pytest
 from line_profiler import LineProfiler
-import collections
 
 
 def get_stats(lp: LineProfiler) -> str:
@@ -21,7 +22,7 @@ def import_string(dotted_path):
     if not isinstance(dotted_path, str):
         return dotted_path
     try:
-        module_path, callable_name = dotted_path.rsplit('.', 1)
+        module_path, callable_name = dotted_path.rsplit(".", 1)
         module = import_module(module_path)
         callable_object = getattr(module, callable_name)
         assert callable(callable_object)
@@ -31,21 +32,36 @@ def import_string(dotted_path):
 
 
 def pytest_addoption(parser):
-    group = parser.getgroup('line-profile')
+    group = parser.getgroup("line-profile")
     group.addoption(
-        '--line-profile',
-        action='store',
+        "--line-profile",
+        action="store",
         nargs="*",
-        help='Register a function to profile while executed tests.'
+        help="Register a function to profile while executed tests.",
     )
-    group._addoption('--line-profile-to-dir', action='store', metavar='path', default='prof/',
-                     help="Save to line profiles to directory")
-    group._addoption('--line-profile-no-print', dest='line_profile_print',action='store_false', default=True,
-                     help="Print line profiles to terminal")
-    group._addoption('--line-profile-no-rst', dest='line_profile_rst',action='store_false', default=True,
-                     help="Also save an index.rst file in the line profile directory")
+    group._addoption(
+        "--line-profile-to-dir",
+        action="store",
+        metavar="path",
+        default="prof/",
+        help="Save to line profiles to directory",
+    )
+    group._addoption(
+        "--line-profile-no-print",
+        dest="line_profile_print",
+        action="store_false",
+        default=True,
+        help="Print line profiles to terminal",
+    )
+    group._addoption(
+        "--line-profile-no-rst",
+        dest="line_profile_rst",
+        action="store_false",
+        default=True,
+        help="Also save an index.rst file in the line profile directory",
+    )
 
-    
+
 def pytest_load_initial_conftests(early_config, parser, args):
     early_config.addinivalue_line(
         "markers",
@@ -53,21 +69,24 @@ def pytest_load_initial_conftests(early_config, parser, args):
     )
 
 
-
 def pytest_runtest_call(item):
     instrumented = []
     if item.get_closest_marker("line_profile"):
-        instrumented += [import_string(s) for s in item.get_closest_marker("line_profile").args]
+        instrumented += [
+            import_string(s) for s in item.get_closest_marker("line_profile").args
+        ]
     if item.config.getvalue("line_profile"):
         instrumented += [import_string(s) for s in item.config.getvalue("line_profile")]
-    
+
     if instrumented:
         lp = LineProfiler(*instrumented)
         item_runtest = item.runtest
+
         def runtest():
             lp.runcall(item_runtest)
             item.config._line_profile = getattr(item.config, "_line_profile", {})
             item.config._line_profile[item.nodeid] = get_stats(lp)
+
         item.runtest = runtest
 
 
@@ -83,25 +102,29 @@ def pytest_terminal_summary(
             terminalreporter.write_sep("=", f"Line Profile result for {k}")
             terminalreporter.write(v)
         if config.option.line_profile_to_dir:
-            os.makedirs(os.path.dirname(config.option.line_profile_to_dir + k + ".txt"), exist_ok=True)
+            os.makedirs(
+                os.path.dirname(config.option.line_profile_to_dir + k + ".txt"),
+                exist_ok=True,
+            )
             with open(config.option.line_profile_to_dir + k + ".txt", "w") as f:
                 f.write(v)
         if config.option.line_profile_rst:
-                os.makedirs(os.path.dirname(config.option.line_profile_to_dir + "index.txt"), exist_ok=True)
-                if cur_file == "":
-                    open(config.option.line_profile_to_dir + "index.rst", 'w').close()
-                with open(config.option.line_profile_to_dir + "index.rst", 'a') as f:
-                    file,meth = k.split('::')
-                    if cur_file != file:
-                        f.write(file + "\n")
-                        f.write("--------------------\n")
-                        cur_file = file
-                    f.write(meth + "\n")
-                    f.write("^^^^^^^^^^^^^^^^^^^^\n")
-                    f.write(":: \n\n")
-                    f.write('\t' + '\n\t'.join(v.split('\n'))+ "\n\n")
-
-
+            os.makedirs(
+                os.path.dirname(config.option.line_profile_to_dir + "index.txt"),
+                exist_ok=True,
+            )
+            if cur_file == "":
+                open(config.option.line_profile_to_dir + "index.rst", "w").close()
+            with open(config.option.line_profile_to_dir + "index.rst", "a") as f:
+                file, meth = k.split("::")
+                if cur_file != file:
+                    f.write(file + "\n")
+                    f.write("--------------------\n")
+                    cur_file = file
+                f.write(meth + "\n")
+                f.write("^^^^^^^^^^^^^^^^^^^^\n")
+                f.write(":: \n\n")
+                f.write("\t" + "\n\t".join(v.split("\n")) + "\n\n")
 
 
 @pytest.fixture
