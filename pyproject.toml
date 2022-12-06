@@ -5,6 +5,8 @@ description = "Profile code executed by pytest"
 authors = ["Martín Gaitán <gaitan@gmail.com>", "Alexander Puck Neuwirth <alexander@neuwirth-informatik.de>"]
 maintainers = ["Alexander Puck Neuwirth <alexander@neuwirth-informatik.de>"]
 readme = "README.md"
+repository = "https://github.com/APN-Pucky/pytest-line-profiler"
+
 
 [tool.poetry.dependencies]
 python = "^3.8"
